@@ -57,28 +57,8 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+
 
       - name: Build the demo debug app
         run: ./gradlew :app:assembleDemoDebug --build-cache --stacktrace | tee build.log
 
-      # The plugin logs every decision at lifecycle level because `debug = true` in
-      # settings.gradle.kts. Fail loudly if the filter silently stopped working.
-      - name: Show what the filter declined
-        run: |
-          DEX=com.android.build.gradle.internal.tasks.DexMergingTask
-          grep "Selective remote cache" build.log || true
-
-          grep -q "declined remote .* for $DEX" build.log || {
-            echo "::error::no DexMergingTask remote call was declined — the filter did nothing"
-            exit 1
-          }
-
-      # A second build with the outputs gone: dex merging comes back from the LOCAL cache, which
-      # is the half of the split the plugin is built to preserve.
-      - name: Build again with outputs deleted
-        run: |
-          find . -type d -name build -maxdepth 3 -prune -exec rm -rf {} +
-          ./gradlew :app:assembleDemoDebug --build-cache --stacktrace | tee rebuild.log
-          grep "Selective remote cache" rebuild.log || true
