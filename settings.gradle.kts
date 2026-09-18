@@ -29,6 +29,41 @@ pluginManagement {
     }
 }
 
+// Added for the selective-remote-build-cache demo. Develocity provides the remote cache this
+// plugin filters in front of; the filter itself is applied below, in buildCache.
+plugins {
+    id("com.gradle.develocity") version "4.5.1"
+    id("io.github.cdsap.selective-remote-cache") version "0.1.0"
+}
+
+val isCi = !System.getenv("CI").isNullOrEmpty()
+
+develocity {
+    server = "https://ge.solutions-team.gradle.com"
+    buildScan {
+        // Credentials come from the DEVELOCITY_ACCESS_KEY environment variable.
+        uploadInBackground = !isCi
+        tag(if (isCi) "CI" else "local")
+        tag("selective-remote-cache")
+    }
+}
+
+buildCache {
+    local {
+        isEnabled = true
+        isPush = true
+    }
+
+    // The point of this repository: dex merging is held back from the REMOTE cache only. Those
+    // entries are large and usually cheaper to recompute than to pull over a WAN; every other
+    // cacheable task keeps using the remote as normal, and the local tier is untouched.
+    remote(io.github.cdsap.selectivecache.SelectiveRemoteBuildCache::class.java) {
+        isPush = isCi
+        excludedTypes = setOf("com.android.build.gradle.internal.tasks.DexMergingTask")
+        debug = true
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     repositories {
@@ -42,7 +77,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "nowinandroid"
+rootProject.name = "nowinandroid-selective-cache"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")

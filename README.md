@@ -1,3 +1,18 @@
+> **This is a fork of [android/nowinandroid](https://github.com/android/nowinandroid), used as a
+> real Android build to demonstrate
+> [selective-remote-build-cache](https://github.com/cdsap/selective-remote-build-cache).**
+>
+> The only changes to upstream are in `settings.gradle.kts` — Develocity plus the
+> `io.github.cdsap.selective-remote-cache` plugin, configured to keep
+> `com.android.build.gradle.internal.tasks.DexMergingTask` out of the **remote** build cache while
+> the local cache serves it as normal — and `.github/workflows/`, where upstream's pipelines are
+> replaced by a single workflow that builds the app and reports what the filter declined.
+>
+> It needs one repository secret, `DEVELOCITY_ACCESS_KEY`, for the Develocity instance named in
+> `settings.gradle.kts`. Everything below is upstream's README.
+
+---
+
 ![Now in Android](docs/images/nia-splash.jpg "Now in Android")
 
 <a href="https://play.google.com/store/apps/details?id=com.google.samples.apps.nowinandroid"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="70"></a>
