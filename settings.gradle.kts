@@ -33,7 +33,7 @@ pluginManagement {
 // plugin filters in front of; the filter itself is applied below, in buildCache.
 plugins {
     id("com.gradle.develocity") version "4.5.1"
-    id("io.github.cdsap.selective-remote-cache") version "0.1.0"
+    id("io.github.cdsap.selective-remote-cache") version "0.1.1"
 }
 
 val isCi = !System.getenv("CI").isNullOrEmpty()
