@@ -39,7 +39,7 @@ plugins {
 val isCi = !System.getenv("CI").isNullOrEmpty()
 
 develocity {
-    server = "https://ge.solutions-team.gradle.com"
+    server = "https://solutions.develocity.cloud"
     buildScan {
         // Credentials come from the DEVELOCITY_ACCESS_KEY environment variable.
         uploadInBackground = !isCi
